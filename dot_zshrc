@@ -1,0 +1,23 @@
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+# Load zsh options, keybindings, and completion
+[[ -f /usr/share/omarchy-zsh/shell/zoptions ]] && source /usr/share/omarchy-zsh/shell/zoptions
+
+# Load shared shell configuration (aliases, functions, environment, tool init)
+[[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
+
+# Load your custom modular config via init.zsh
+INIT="$HOME/.config/zsh/init.zsh"
+[[ -r "$INIT" ]] && source "$INIT"
+
+# Tool environments
+[[ -r "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
+[[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate zsh)"
+fi
+
+# Show fastfetch on interactive shells
+[[ -o interactive ]] && command -v fastfetch >/dev/null && fastfetch

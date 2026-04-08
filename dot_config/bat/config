@@ -1,0 +1,3 @@
+--map-syntax justfile:make
+--map-syntax Justfile:make
+

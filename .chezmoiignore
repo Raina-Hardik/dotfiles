@@ -1,0 +1,3 @@
+# Exclude sensitive files
+.git/
+api-keys.zsh

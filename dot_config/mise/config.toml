@@ -1,0 +1,5 @@
+[tools]
+chezmoi = "latest"
+go = "latest"
+node = "25.2.1"
+python = "latest"
