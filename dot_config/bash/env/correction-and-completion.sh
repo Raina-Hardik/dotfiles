@@ -1,22 +1,15 @@
-# Correction - bash uses nocorrect/shopt for various options
-# Enable bash completion if available
-if [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-fi
+# Correction
+# shopt -s nocorrect              # Bash doesn't have spell-check like zsh
+# shopt -s nocorrect_all          # (equivalent to CORRECT_ALL)
 
-# Enable bash completion from homebrew or other sources
-if [ -f $(brew --prefix 2>/dev/null)/etc/bash_completion ]; then
-    . $(brew --prefix 2>/dev/null)/etc/bash_completion
-fi
+# Misc
+shopt -s interactive_comments    # Allow comments in interactive shell
 
-# Enable cdable_vars for easier cd into CDPATH-like navigation
-shopt -s cdable_vars 2>/dev/null
+# Completion
+shopt -s complete_in_word        # Complete from both ends of a word (if available)
 
-# Enable extglob for extended glob patterns
-shopt -s extglob 2>/dev/null
-
-# Enable checkwinsize for proper terminal size handling
-shopt -s checkwinsize 2>/dev/null
-
-# Enable globstar for recursive ** patterns
-shopt -s globstar 2>/dev/null
+# Navigation
+shopt -s autocd 2>/dev/null      # Type directory name to cd
+shopt -s cdspell 2>/dev/null     # Correct small errors in cd
+shopt -s extglob 2>/dev/null     # Enable extended pattern matching
+shopt -s globstar 2>/dev/null    # Enable recursive ** patterns
