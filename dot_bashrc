@@ -1,0 +1,35 @@
+# If not running interactively, don't do anything (leave this at the top of this file)
+[[ $- != *i* ]] && return
+
+# Auto-launch zsh shell if in interactive bash
+if command -v zsh &> /dev/null; then
+  if [[ $(ps --no-header --pid=$PPID --format=comm) != "zsh" && -z ${BASH_EXECUTION_STRING} && ${SHLVL} == 1 ]]
+  then
+    shopt -q login_shell && LOGIN_OPTION='--login' || LOGIN_OPTION=''
+    exec zsh $LOGIN_OPTION
+  fi
+fi
+
+# Load bash options, keybindings, and completion
+[[ -f /usr/share/omarchy-zsh/shell/boptions ]] && source /usr/share/omarchy-zsh/shell/boptions
+
+# Load shared shell configuration (aliases, functions, environment, tool init)
+[[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
+
+# Load your custom modular config via init.sh
+INIT="$HOME/.config/bash/init.sh"
+[[ -r "$INIT" ]] && source "$INIT"
+
+# Tool environments
+[[ -r "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
+[[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+
+if command -v mise >/dev/null 2>&1; then
+  eval "$(mise activate bash)"
+fi
+
+# Show fastfetch on interactive shells
+[[ -o interactive ]] && command -v fastfetch >/dev/null && fastfetch
+
+# OpenClaw Completion
+source "/home/hardi/.openclaw/completions/openclaw.bash" 2>/dev/null || true
