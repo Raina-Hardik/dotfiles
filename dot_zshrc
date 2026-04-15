@@ -20,4 +20,4 @@ if command -v mise >/dev/null 2>&1; then
 fi
 
 # Show fastfetch on interactive shells
-[[ -o interactive ]] && command -v fastfetch >/dev/null && fastfetch
+# [[ -o interactive ]] && command -v fastfetch >/dev/null && fastfetch
