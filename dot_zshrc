@@ -1,6 +1,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+typeset -U PATH path
+
 # Load zsh options, keybindings, and completion
 [[ -f /usr/share/omarchy-zsh/shell/zoptions ]] && source /usr/share/omarchy-zsh/shell/zoptions
 
@@ -18,6 +20,7 @@ INIT="$HOME/.config/zsh/init.zsh"
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
+
 
 # Show fastfetch on interactive shells
 # [[ -o interactive ]] && command -v fastfetch >/dev/null && fastfetch
