@@ -21,6 +21,3 @@ if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
 
-
-# Show fastfetch on interactive shells
-# [[ -o interactive ]] && command -v fastfetch >/dev/null && fastfetch
