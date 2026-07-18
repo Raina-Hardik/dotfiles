@@ -31,6 +31,7 @@
 	email = hardikraina079@gmail.com
 [core]
 	pager = delta
+	excludesfile = /home/hardik/.gitignore-global
 [interactive]
 	diffFilter = delta --color-only
 [delta]

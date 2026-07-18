@@ -2,3 +2,6 @@
 .git/
 api-keys.zsh
 api-keys.sh
+
+# nvim plugin lockfile - machine-specific, do not track
+.config/nvim/lazy-lock.json
