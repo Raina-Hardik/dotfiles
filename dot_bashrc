@@ -10,13 +10,9 @@ if command -v zsh &> /dev/null; then
   fi
 fi
 
-# Load bash options, keybindings, and completion
-[[ -f /usr/share/omarchy-zsh/shell/boptions ]] && source /usr/share/omarchy-zsh/shell/boptions
-
-# Load shared shell configuration (aliases, functions, environment, tool init)
-[[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
-
-# Load your custom modular config via init.sh
+# Load the modular config via init.sh. Everything omarchy-zsh used to provide
+# is now vendored under ~/.config/bash/ so this works on any distro.
+# (The old boptions source line was dead — that file never existed.)
 INIT="$HOME/.config/bash/init.sh"
 [[ -r "$INIT" ]] && source "$INIT"
 
@@ -27,4 +23,10 @@ INIT="$HOME/.config/bash/init.sh"
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate bash)"
 fi
+
+# Must come AFTER `mise activate`: with go_set_gobin=false mise unsets GOBIN,
+# so anything set earlier (e.g. in env/path.sh) gets wiped. Pinning it here
+# keeps `go install` output out of mise's versioned toolchain dir, where every
+# go upgrade would orphan it.
+export GOBIN="$HOME/go/bin"
 

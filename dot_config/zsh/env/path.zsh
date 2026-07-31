@@ -5,9 +5,7 @@
 
 path=("$HOME/.local/bin" $path)
 
-# Go tools installed with `go install`.
-# mise defaults GOBIN into its *versioned* toolchain dir
-# (~/.local/share/mise/installs/go/<version>/bin), so every go upgrade
-# silently orphans everything you installed. Pin it outside mise's tree.
-export GOBIN="$HOME/go/bin"
-path=("$GOBIN" $path)
+# Go tools installed with `go install` land in ~/go/bin.
+# NOTE: GOBIN itself is exported in .zshrc *after* `mise activate`, because
+# mise unsets GOBIN when go_set_gobin=false and would clobber a value set here.
+path=("$HOME/go/bin" $path)

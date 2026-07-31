@@ -3,13 +3,8 @@
 
 typeset -U PATH path
 
-# Load zsh options, keybindings, and completion
-[[ -f /usr/share/omarchy-zsh/shell/zoptions ]] && source /usr/share/omarchy-zsh/shell/zoptions
-
-# Load shared shell configuration (aliases, functions, environment, tool init)
-[[ -f /usr/share/omarchy-zsh/shell/all ]] && source /usr/share/omarchy-zsh/shell/all
-
-# Load your custom modular config via init.zsh
+# Load the modular config via init.zsh. Everything omarchy-zsh used to provide
+# is now vendored under ~/.config/zsh/ so this works on any distro.
 INIT="$HOME/.config/zsh/init.zsh"
 [[ -r "$INIT" ]] && source "$INIT"
 
@@ -20,4 +15,16 @@ INIT="$HOME/.config/zsh/init.zsh"
 if command -v mise >/dev/null 2>&1; then
   eval "$(mise activate zsh)"
 fi
+
+# Must come AFTER `mise activate`: with go_set_gobin=false mise unsets GOBIN,
+# so anything set earlier (e.g. in env/path.zsh) gets wiped. Pinning it here
+# keeps `go install` output out of mise's versioned toolchain dir, where every
+# go upgrade would orphan it.
+export GOBIN="$HOME/go/bin"
+
+# zsh-syntax-highlighting MUST be sourced last so it wraps every ZLE widget
+# defined above it (notably the fzf widgets in functions/fzf-widgets.zsh).
+# Anything added below this line will not be highlighted.
+[[ -f /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && \
+  source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
