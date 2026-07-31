@@ -13,3 +13,4 @@ packages/
 # Repo documentation. Anchored to the root so it does not also swallow
 # .config/nvim/README.md, which IS a real dotfile.
 /README.md
+/MANUAL-STEPS.md
