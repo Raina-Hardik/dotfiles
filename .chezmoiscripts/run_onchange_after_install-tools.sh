@@ -72,11 +72,31 @@ GO_TOOLS=(
     "eget2|github.com/xplshn/eget2@latest|"   # backs the `eget` alias
 )
 
+# npm globals. Format: "<binary>|<package>". Uses mise's node.
+NPM_GLOBALS=(
+    "playwright-cli|@playwright/cli@latest"
+)
+
+# Tools distributed via their own install script. Format: "<binary>|<url>".
+# Each installs itself into ~/.local/bin (or a versioned dir symlinked there)
+# and self-updates afterwards, so these run once and are then skipped.
+# These pipe a remote script into a shell — they are first-party installers
+# for tools already trusted here, but that is the tradeoff being made.
+VENDOR_INSTALLERS=(
+    "claude|https://claude.ai/install.sh"
+    "agy|https://antigravity.google/cli/install.sh"
+    "hermes|https://hermes-agent.nousresearch.com/install.sh"
+)
+
 # ---------------------------------------------------------------------
 # Setup
 # ---------------------------------------------------------------------
 
-export GOBIN="${GOBIN:-$HOME/go/bin}"
+# Forced, NOT `${GOBIN:-...}`. An inherited GOBIN is untrustworthy here: mise
+# points it at its own versioned toolchain dir, and a shell started before that
+# was fixed still carries the stale value. Honouring it would install go tools
+# into a directory the next go upgrade deletes.
+export GOBIN="$HOME/go/bin"
 mkdir -p "$GOBIN"
 
 failed=()
@@ -173,6 +193,37 @@ if command -v go >/dev/null 2>&1; then
 else
     warn "go not found; skipped ${#GO_TOOLS[@]} tools"
 fi
+
+# ---------------------------------------------------------------------
+# npm globals
+# ---------------------------------------------------------------------
+
+if command -v npm >/dev/null 2>&1; then
+    for entry in "${NPM_GLOBALS[@]}"; do
+        IFS='|' read -r bin pkg <<<"$entry"
+        command -v "$bin" >/dev/null 2>&1 && continue
+        note "npm: installing $pkg"
+        npm install -g "$pkg" || failed+=("npm:$pkg")
+    done
+else
+    warn "npm not found; skipped ${#NPM_GLOBALS[@]} packages"
+fi
+
+# ---------------------------------------------------------------------
+# Vendor install scripts
+# ---------------------------------------------------------------------
+
+for entry in "${VENDOR_INSTALLERS[@]}"; do
+    IFS='|' read -r bin url <<<"$entry"
+    command -v "$bin" >/dev/null 2>&1 && continue
+    note "installer: fetching $bin from $url"
+    if curl -fsSL "$url" | bash; then
+        command -v "$bin" >/dev/null 2>&1 \
+            || warn "$bin installer ran but '$bin' is still not on PATH"
+    else
+        failed+=("installer:$bin")
+    fi
+done
 
 # ---------------------------------------------------------------------
 

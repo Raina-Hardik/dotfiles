@@ -1,0 +1,163 @@
+#!/usr/bin/env bash
+# disk-audit — storage health inspector
+
+set -u
+
+SNAP_TOTAL_GIB=0
+
+# ── deps ──────────────────────────────────────────────────────────────────────
+for cmd in gum duf; do
+    command -v "$cmd" &>/dev/null || { echo "Missing required tool: $cmd" >&2; exit 1; }
+done
+
+# ── style ─────────────────────────────────────────────────────────────────────
+h1()   { echo; gum style --bold --foreground 212 --border normal --border-foreground 212 --padding "0 3" "$@"; echo; }
+h2()   { echo; gum style --bold --foreground 99 "▸ $*"; echo; }
+ok()   { gum style --foreground 82  "  ✓ $*"; }
+warn() { gum style --foreground 214 "  ⚠ $*"; }
+crit() { gum style --foreground 196 "  ✗ $*"; }
+dim()  { gum style --foreground 240 "  $*"; }
+trow() { printf "  \033[38;5;117m%-30s\033[0m \033[1m%s GiB\033[0m\n" "$1" "$2"; }
+sep()  { printf "  \033[38;5;238m%s\033[0m\n" "$(printf '─%.0s' {1..46})"; }
+
+# ── header ────────────────────────────────────────────────────────────────────
+gum style \
+    --border double --border-foreground 212 \
+    --padding "1 8" --margin "1 2" \
+    --bold --foreground 212 \
+    "  DISK AUDIT" \
+    "  $(date '+%A, %d %B %Y  %H:%M')"
+
+# ── sudo ──────────────────────────────────────────────────────────────────────
+dim "Some checks need sudo — caching credentials..."
+sudo -v
+
+# ── 1. overview ───────────────────────────────────────────────────────────────
+h1 "  Overview"
+duf /
+
+# ── 2. btrfs ─────────────────────────────────────────────────────────────────
+if command -v btrfs &>/dev/null; then
+    h2 "Btrfs Filesystem"
+    sudo btrfs filesystem usage / 2>/dev/null || warn "btrfs info unavailable"
+fi
+
+# ── 3. snapper ───────────────────────────────────────────────────────────────
+if command -v snapper &>/dev/null; then
+    h2 "Snapper Snapshots"
+    SNAP_LIST=$(sudo snapper list 2>/dev/null)
+    echo "$SNAP_LIST"
+    echo
+
+    # flag any individual snapshot eating more than 5 GiB (per-snapshot cost, informational)
+    while IFS= read -r line; do
+        SIZE=$(echo "$line" | grep -oP '[\d.]+(?=\s*GiB)' | head -1 || true)
+        if [[ -n "$SIZE" ]] && [[ $(echo "$SIZE > 5" | bc -l) == "1" ]]; then
+            NUM=$(echo "$line" | awk '{print $1}')
+            crit "Snapshot #$NUM is ${SIZE} GiB — consider: sudo snapper delete $NUM"
+        fi
+    done <<< "$SNAP_LIST"
+
+    # Real disk cost via btrfs qgroups. Snapper's own "Used Space" column only
+    # counts blocks unique to a SINGLE snapshot — data shared between two or
+    # more old snapshots (but gone from the live filesystem) is invisible there
+    # and silently undercounts what deleting the whole history would reclaim.
+    to_gib_awk='function to_gib(v,   n) {
+        if (v ~ /GiB$/) { n=v; sub(/GiB$/,"",n); return n+0 }
+        if (v ~ /MiB$/) { n=v; sub(/MiB$/,"",n); return n/1024 }
+        if (v ~ /KiB$/) { n=v; sub(/KiB$/,"",n); return n/1024/1024 }
+        return 0
+    }'
+    QGROUPS=$(sudo btrfs qgroup show -prce / 2>/dev/null)
+    if [[ -n "$QGROUPS" ]] && ! grep -qi "quota" <<< "$QGROUPS"; then
+        SNAP_INDIV_GIB=$(echo "$QGROUPS" | awk "$to_gib_awk"'
+            $1 == "Qgroupid" || $1 ~ /^-+$/ { next }
+            $NF ~ /\.snapshots\// { t += to_gib($3) }
+            END { printf "%.2f", t+0 }')
+
+        SNAP_GROUP_GIB=$(echo "$QGROUPS" | awk "$to_gib_awk"'
+            $1 == "Qgroupid" || $1 ~ /^-+$/ { next }
+            { split($1, id, "/"); if (id[1] != "0") t += to_gib($3) }
+            END { printf "%.2f", t+0 }')
+
+        warn "Snapshot-exclusive data (sum of individual snapshots): ${SNAP_INDIV_GIB} GiB"
+        if [[ -n "$SNAP_GROUP_GIB" ]] && (( $(echo "${SNAP_GROUP_GIB:-0} > ${SNAP_INDIV_GIB:-0} + 1" | bc -l) )); then
+            crit "Real reclaimable if ALL snapshots are deleted: ${SNAP_GROUP_GIB} GiB — data shared across multiple old snapshots that's invisible to snapper's per-snapshot accounting"
+            SNAP_TOTAL_GIB="$SNAP_GROUP_GIB"
+        else
+            SNAP_TOTAL_GIB="$SNAP_INDIV_GIB"
+        fi
+    else
+        warn "Btrfs quotas not enabled — falling back to snapper's per-snapshot totals (likely undercounts)"
+        SNAP_TOTAL_GIB=$(echo "$SNAP_LIST" | grep -oP '[\d.]+\s*(GiB|MiB)' | awk '
+            { if ($2=="GiB") t+=$1; else if ($2=="MiB") t+=$1/1024 }
+            END { printf "%.2f", t+0 }')
+        warn "Total snapshot storage: ${SNAP_TOTAL_GIB} GiB"
+    fi
+fi
+
+# ── 4. /var/lib ───────────────────────────────────────────────────────────────
+h2 "/var/lib — Top Consumers"
+sudo du -h --max-depth=1 /var/lib 2>/dev/null | sort -rh | head -15
+
+# ── 5. docker ─────────────────────────────────────────────────────────────────
+if command -v docker &>/dev/null; then
+    h2 "Docker"
+    docker system df 2>/dev/null || warn "Docker daemon not running"
+    echo
+    dim "Note: containerd stores image layers in /var/lib/containerd (above), separate from docker system df"
+fi
+
+# ── 6. key directories ────────────────────────────────────────────────────────
+h2 "Key Directories"
+{
+    sudo du -sh /var/log /var/cache /usr /opt 2>/dev/null
+    sudo du -sh ~ 2>/dev/null
+} | sort -rh
+
+# ── 7. accounting ─────────────────────────────────────────────────────────────
+h1 "  Storage Accounting"
+dim "Totalling up..."
+
+TOTAL_GIB=$(df -BG / | awk 'NR==2 {gsub(/G/,"",$3); print $3}')
+HOME_GIB=$(sudo du -sB1G ~ 2>/dev/null | awk '{print $1}')
+DOCKER_GIB=$(sudo du -sB1G /var/lib/docker /var/lib/containerd 2>/dev/null | awk '{t+=$1} END{print int(t+0)}' || echo 0)
+SNAP_GIB=$(printf "%.0f" "${SNAP_TOTAL_GIB}")
+LOG_GIB=$(sudo du -sB1G /var/log 2>/dev/null | awk '{print $1}')
+CACHE_GIB=$(sudo du -sB1G /var/cache 2>/dev/null | awk '{print $1}')
+USR_GIB=$(du -sB1G /usr 2>/dev/null | awk '{print $1}')
+ACCOUNTED=$((HOME_GIB + DOCKER_GIB + SNAP_GIB + LOG_GIB + CACHE_GIB + USR_GIB))
+DIFF=$((TOTAL_GIB - ACCOUNTED))
+
+echo
+sep
+trow "Home (~)"              "$HOME_GIB"
+trow "Docker + Containerd"   "$DOCKER_GIB"
+trow "Snapper snapshots"     "$SNAP_GIB"
+trow "/var/log"              "$LOG_GIB"
+trow "/var/cache"            "$CACHE_GIB"
+trow "/usr (system)"         "$USR_GIB"
+sep
+trow "Accounted for"         "$ACCOUNTED"
+trow "Total used (df)"       "$TOTAL_GIB"
+sep
+echo
+
+if   [ "$DIFF" -gt 40 ]; then
+    crit "Unaccounted / Btrfs overhead: ${DIFF} GiB — worth investigating"
+    dim "Run: sudo du -h --max-depth=2 / --exclude=/home --exclude=/.snapshots | sort -rh | head -20"
+elif [ "$DIFF" -gt 20 ]; then
+    warn "Unaccounted / Btrfs overhead: ${DIFF} GiB — normal Btrfs slack + DUP metadata"
+else
+    ok  "Unaccounted / overhead: ${DIFF} GiB — clean"
+fi
+
+echo
+gum style \
+    --foreground 240 --border normal --border-foreground 238 \
+    --padding "0 2" --margin "0 2" \
+    "Quick fixes:" \
+    "  sudo snapper delete <N>                  free a snapshot" \
+    "  docker system prune -a                   nuke unused images/cache" \
+    "  sudo btrfs balance start -dusage=85 /    reclaim Btrfs slack"
+echo
