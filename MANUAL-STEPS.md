@@ -134,6 +134,14 @@ Adjust to taste — this is what the old box had enabled, not a prescription.
 | `codex`, `opencode` shim, `ghui`, `copilot`, `gemini`, `pi`, `leaf` | Dropped. `mcat` covers `leaf`. |
 | `uv` / `uvx` in `~/.local/bin` | mise owns uv now; the hand-installed copies are redundant. |
 
-Still hand-installed and **not yet tracked** — decide before wiping:
-`agy`, `hermes` (installer: `curl -fsSL https://hermes-agent.nousresearch.com/install.sh | bash`),
-`playwright-cli`.
+Nothing is left hand-installed-and-untracked. `claude`, `agy` and `hermes`
+install via their own scripts, `playwright-cli` via npm, and `disk-audit` is
+tracked as a dotfile — all driven by `.chezmoiscripts/run_onchange_after_install-tools.sh`.
+
+### Post-install logins
+
+The installers place binaries but do not authenticate. After the first run:
+
+- [ ] `claude` — sign in
+- [ ] `agy` — sign in
+- [ ] `gh auth login`
