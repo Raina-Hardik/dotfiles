@@ -1,3 +1,10 @@
+[settings]
+# Stop mise from pointing GOBIN at its own versioned toolchain dir
+# (~/.local/share/mise/installs/go/<version>/bin). With that default,
+# every `go install` binary is orphaned on the next go upgrade.
+# GOBIN is pinned to ~/go/bin in zsh/bash env/path.* instead.
+go_set_gobin = false
+
 [tools]
 chezmoi = "latest"
 go = "latest"
