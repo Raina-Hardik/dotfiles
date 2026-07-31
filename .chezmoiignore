@@ -9,3 +9,7 @@ api-keys.sh
 # Package manifests live in the repo for rebuilds; they are not dotfiles
 # and must not be written into $HOME.
 packages/
+
+# Repo documentation. Anchored to the root so it does not also swallow
+# .config/nvim/README.md, which IS a real dotfile.
+/README.md

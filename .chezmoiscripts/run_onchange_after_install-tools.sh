@@ -69,6 +69,7 @@ UV_TOOLS=(
 # Go modules. Format: "<binary>|<module path>|<build tags, or empty>"
 GO_TOOLS=(
     "hugo|github.com/gohugoio/hugo@latest|withdeploy"
+    "eget2|github.com/xplshn/eget2@latest|"   # backs the `eget` alias
 )
 
 # ---------------------------------------------------------------------
