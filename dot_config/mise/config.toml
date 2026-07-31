@@ -2,4 +2,15 @@
 chezmoi = "latest"
 go = "latest"
 node = "latest"
-python = "latest"
+rust = "latest"
+uv = "latest"
+
+# python is deliberately NOT listed: uv owns Python, per-project.
+# Bare `python` resolves to the system (pacman) interpreter.
+#
+# rust uses mise's core plugin, which drives rustup underneath.
+# NOTE: ~/.cargo/env is sourced by .zshrc/.bashrc and prepends
+# ~/.cargo/bin, so a pre-existing rustup shadows mise's shims.
+# Keep that in mind on a fresh install: let mise install rust first,
+# and only add the ~/.cargo/env line back if you need espup's
+# ESP32 toolchain, which registers itself with rustup directly.
