@@ -1,0 +1,6 @@
+# Global git excludes.
+# Git reads this path ($XDG_CONFIG_HOME/git/ignore) automatically —
+# do NOT set core.excludesFile, it REPLACES this file rather than adding to it.
+
+CLAUDE.md
+.claude/

@@ -31,7 +31,8 @@
 	email = hardikraina079@gmail.com
 [core]
 	pager = delta
-	excludesfile = /home/hardik/.gitignore-global
+	# No excludesFile: global ignores live at ~/.config/git/ignore, which git
+	# reads by default. Setting excludesFile would replace that file, not add to it.
 [interactive]
 	diffFilter = delta --color-only
 [delta]
