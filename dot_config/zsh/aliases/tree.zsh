@@ -1,1 +1,1 @@
-alias tree='eza --tree --level=2 --icons'
+alias tree='eza --tree --level=2 --icons=auto'
