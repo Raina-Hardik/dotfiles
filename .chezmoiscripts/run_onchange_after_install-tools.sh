@@ -37,9 +37,16 @@ CARGO_TOOLS=(
     diskwatch
     mcat                    # cat with media support
     viu                     # terminal image viewer
-    spotatui
+    spotatui                # music TUI; see CARGO_FEATURES for Navidrome
     topgrade                # upgrade-everything runner
     cloudflare-speed-cli
+)
+
+# Crates needing non-default cargo features. Same format as a plain entry
+# plus the feature list. `subsonic` is NOT a default feature of spotatui —
+# without it you get a Spotify-only build with no Navidrome support.
+declare -A CARGO_FEATURES=(
+    [spotatui]="all-sources"   # local-files + subsonic + internet-radio + youtube
 )
 
 # ESP32 embedded toolchain. Only needed for ~/esp-ctrl work; espup
@@ -96,14 +103,20 @@ if command -v cargo >/dev/null 2>&1; then
         if grep -qx "$crate" <<<"$installed_crates"; then
             return 0
         fi
-        note "cargo: installing $crate"
+        local feats="${CARGO_FEATURES[$crate]:-}"
+        note "cargo: installing $crate${feats:+ (features: $feats)}"
         # binstall grabs a prebuilt binary when one exists, which turns a
-        # multi-minute compile into a download. Fall back to a real build.
+        # multi-minute compile into a download. Upstream release builds already
+        # carry the features below, so binstall is safe for those too.
         if command -v cargo-binstall >/dev/null 2>&1 && [ "$crate" != cargo-binstall ]; then
             cargo binstall --no-confirm --disable-telemetry "$crate" && return 0
             warn "binstall failed for $crate; falling back to cargo install"
         fi
-        cargo install --locked "$crate" || { failed+=("cargo:$crate"); return 1; }
+        if [ -n "$feats" ]; then
+            cargo install --locked --features "$feats" "$crate" || { failed+=("cargo:$crate"); return 1; }
+        else
+            cargo install --locked "$crate" || { failed+=("cargo:$crate"); return 1; }
+        fi
     }
 
     for crate in "${CARGO_TOOLS[@]}"; do

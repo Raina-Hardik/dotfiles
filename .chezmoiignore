@@ -5,3 +5,7 @@ api-keys.sh
 
 # nvim plugin lockfile - machine-specific, do not track
 .config/nvim/lazy-lock.json
+
+# Package manifests live in the repo for rebuilds; they are not dotfiles
+# and must not be written into $HOME.
+packages/
