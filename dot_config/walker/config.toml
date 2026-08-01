@@ -15,10 +15,20 @@ symbols = 1
 [providers]
 max_results = 256
 
-# Apps only. websearch used to sit here too, so every keystroke interleaved
-# search-engine rows with real applications — that was most of the clutter.
-# It is still one keystroke away behind the `@` prefix below.
-default = [ "desktopapplications" ]
+# Type freely: applications are fuzzy-matched, and websearch contributes a
+# single row that ranks below any real app match. When nothing matches, that
+# row is all that is left — so Return sends the raw query to the default
+# browser. Walker has no explicit "only if zero results" hook; this is the
+# ranking doing the work.
+default = [ "desktopapplications", "websearch" ]
+
+# An empty prompt should list applications, not offer to search for nothing.
+empty = [ "desktopapplications" ]
+
+[providers.max_results_provider]
+# One search row, never a block of them. This is what keeps websearch feeling
+# like a fallback rather than a provider competing for space.
+websearch = 1
 
 [[providers.prefixes]]
 prefix = "/"
@@ -45,6 +55,5 @@ prefix = "$"
 provider = "clipboard"
 
 # No [[emergencies]] block. The omarchy config had one calling
-# `omarchy-restart-walker`, which does not exist here. There is no walker or
-# elephant systemd user unit on this system either — walker spawns elephant
-# itself — so there is nothing honest to put in its place.
+# `omarchy-restart-walker`, which does not exist here. Elephant now runs as a
+# real user unit, so `systemctl --user restart elephant` is the recovery path.
