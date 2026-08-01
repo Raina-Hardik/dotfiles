@@ -41,8 +41,14 @@ chezmoi init https://github.com/Raina-Hardik/dotfiles.git
 # 5. System packages. install-tools.sh depends on some of them.
 cd ~/.local/share/chezmoi
 sudo pacman -S --needed - < packages/pacman-native.lst
-yay        -S --needed - < packages/pacman-aur.lst
 flatpak install -y $(cat packages/flatpak.lst)
+
+#    yay opens /dev/tty directly, so --noconfirm alone is not enough when
+#    running non-interactively (over ssh, in a script). These four flags are
+#    what actually make it unattended.
+yay -S --needed --noconfirm \
+    --answerdiff=None --answerclean=None --answeredit=None --removemake \
+    - < packages/pacman-aur.lst
 
 # 6. Now apply. This writes the dotfiles and runs the tool installer.
 #    Use --force on the SECOND run: the Antigravity (agy) installer appends a
