@@ -346,7 +346,12 @@ scale = 1.0
 
 [plugins]
 auto_update = true
-enabled = []
+enabled = [
+    "blackbartblues/keymap",
+    "8bury/lid-guard",
+    "kenn/keybind-cheatsheet",
+    "cleboost/ssh-launcher",
+]
 
     [[plugins.source]]
     enabled = true
