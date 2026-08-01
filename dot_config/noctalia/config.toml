@@ -62,7 +62,7 @@ order = [ "default" ]
     shadow = true
     show_on_workspace_switch = true
     smart_auto_hide = false
-    start = [ "launcher", "wallpaper", "workspaces" ]
+    start = [ "walker_launcher", "wallpaper", "workspaces" ]
     thickness = 34
     widget_spacing = 6
 
@@ -600,6 +600,15 @@ effects = true
 enabled = true
 refresh_minutes = 30
 unit = "metric"
+
+[widget.walker_launcher]
+type = "custom_button"
+custom_image = "/usr/share/icons/Adwaita/symbolic/actions/system-search-symbolic.svg"
+custom_image_colorize = true
+tooltip = "Search (walker)"
+
+    [widget.walker_launcher.actions]
+    left = "walker"
 
 [widget.active_window]
 icon_size = 14.0
