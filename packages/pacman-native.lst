@@ -93,6 +93,7 @@ man-db
 mariadb-libs
 mise
 mpv
+mpv-mpris
 nautilus
 nautilus-python
 neovim

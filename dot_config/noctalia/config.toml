@@ -33,6 +33,7 @@ order = [ "default" ]
     contact_shadow = false
     enabled = true
     end = [
+        "media",
         "tray",
         "notifications",
         "clipboard",
@@ -631,6 +632,9 @@ show_scroll_lock = false
 type = "lock_keys"
 
 [widget.media]
+# The widget only earns its space while something is actually playing;
+# without this it sits there permanently reading "Nothing playing".
+hide_when_no_media = true
 art_size = 16.0
 max_length = 220.0
 min_length = 80.0
