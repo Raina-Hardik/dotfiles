@@ -14,3 +14,4 @@ packages/
 # .config/nvim/README.md, which IS a real dotfile.
 /README.md
 /MANUAL-STEPS.md
+/system-setup.sh

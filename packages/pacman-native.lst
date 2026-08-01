@@ -52,18 +52,14 @@ gnome-disk-utility
 gnome-keyring
 gnome-themes-extra
 gpu-screen-recorder
+greetd
+greetd-tuigreet
 grim
 gst-plugin-pipewire
 gum
 gvfs-mtp
 gvfs-nfs
 gvfs-smb
-hypridle
-hyprland
-hyprland-guiutils
-hyprlock
-hyprpicker
-hyprsunset
 imagemagick
 impala
 imv
@@ -101,6 +97,7 @@ nautilus
 nautilus-python
 neovim
 nfs-utils
+niri
 noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
@@ -133,7 +130,6 @@ ripgrep
 ruby
 rust
 satty
-sddm
 slurp
 socat
 sof-firmware
@@ -156,7 +152,6 @@ ufw
 unzip
 upower
 usage
-uwsm
 virt-manager
 vpl-gpu-rt
 vulkan-intel
@@ -168,9 +163,10 @@ wiremix
 wireplumber
 wl-clipboard
 woff2-font-awesome
+xdg-desktop-portal-gnome
 xdg-desktop-portal-gtk
-xdg-desktop-portal-hyprland
 xmlstarlet
+xwayland-satellite
 yazi
 zoxide
 zram-generator
