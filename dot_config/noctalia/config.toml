@@ -33,15 +33,11 @@ order = [ "default" ]
     contact_shadow = false
     enabled = true
     end = [
-        "media",
         "tray",
         "notifications",
         "clipboard",
         "network",
-        "bluetooth",
         "volume",
-        "brightness",
-        "battery",
         "control-center",
         "session"
     ]
