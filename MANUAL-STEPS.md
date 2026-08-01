@@ -31,6 +31,25 @@ fail — they need `clang` (libclang, for bindgen) and `alsa-lib` respectively.
 
 ---
 
+## 1b. Firewall
+
+**CachyOS ships `ufw` enabled with deny-incoming**, out of the box, on a
+TTY-only install. Nothing in this repo turns it on — it is already on.
+
+The failure mode is silent: inbound TCP is *dropped*, not rejected, so
+connections hang until they time out while ICMP keeps working. A machine that
+pings fine but refuses SSH is this, not a broken service.
+
+```sh
+sudo ufw allow 22/tcp     # only if you want to reach this box over SSH
+```
+
+Verified on the test VM: `sshd` was active and listening on `0.0.0.0:22` with
+`firewalld` inactive, and every TCP port still timed out until this rule
+existed.
+
+---
+
 ## 2. Groups
 
 ```sh

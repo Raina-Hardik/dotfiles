@@ -18,31 +18,59 @@ Order matters. Several Rust tools need system libraries present *before* they
 compile, so packages must land before `chezmoi apply` runs the tool installer.
 
 ```sh
-# 1. mise — the only bootstrap dependency. Brings chezmoi, go, rust, uv, node.
+# 1. Prerequisites. A TTY-only CachyOS install ships none of an AUR helper,
+#    so grab one here — both yay and paru live in the `cachyos` repo as
+#    ordinary packages, no bootstrapping required.
+sudo pacman -S --needed base-devel git curl yay
+
+# 2. Resolve the two known conflicts BEFORE the bulk install.
+#    CachyOS ships different implementations of two things this repo wants.
+#    pacman is atomic, so leaving these unresolved aborts the whole
+#    transaction rather than installing anything (see "Known conflicts").
+sudo pacman -Rdd --noconfirm jack2 tealdeer
+sudo pacman -S  --needed --noconfirm pipewire-jack
+
+# 3. mise. Brings chezmoi, go, rust, uv, node.
 curl https://mise.run | sh
 export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"
 mise use -g chezmoi@latest
 
-# 2. Clone the source WITHOUT applying yet.
+# 4. Clone the source WITHOUT applying yet.
 chezmoi init https://github.com/Raina-Hardik/dotfiles.git
 
-# 3. System packages first — install-tools.sh depends on some of them.
+# 5. System packages. install-tools.sh depends on some of them.
 cd ~/.local/share/chezmoi
 sudo pacman -S --needed - < packages/pacman-native.lst
-yay   -S --needed - < packages/pacman-aur.lst
+yay        -S --needed - < packages/pacman-aur.lst
 flatpak install -y $(cat packages/flatpak.lst)
 
-# 4. Now apply. This writes the dotfiles and runs the tool installer.
+# 6. Now apply. This writes the dotfiles and runs the tool installer.
 chezmoi apply
 ```
 
 > **Do not** run `chezmoi init --apply` in one shot on a bare machine. It would
 > execute `install-tools.sh` before pacman has installed `clang` and `alsa-lib`,
-> and the `ouch` and `spotatui` builds would fail. Verified in a clean Arch
-> container.
+> and the `ouch` and `spotatui` builds would fail.
 
 `multilib` must be enabled for `steam` and the `lib32-*` packages. CachyOS
-enables it by default; stock Arch does not.
+enables it by default — verified on a real install; stock Arch does not.
+
+### Known conflicts
+
+Both were found by installing this manifest on a clean CachyOS VM. Neither
+shows up on stock Arch, which ships neither alternative.
+
+| This repo wants | CachyOS ships | Why it aborts |
+|---|---|---|
+| `pipewire-jack` | `jack2` (dep of ffmpeg, fluidsynth, portaudio, vlc-plugin-jack) | both `provide jack` |
+| `tldr` | `tealdeer` | both `provide tldr` |
+
+`--noconfirm` answers **N** to "Remove X?", so pacman refuses the entire
+transaction. Step 2 above does the swap explicitly. Do not reach for
+`--ask=4` instead: it silently approves every removal pacman proposes.
+
+`yay` is deliberately **not** in `packages/pacman-aur.lst` — it is a
+prerequisite for reading that file, not something the file installs.
 
 ---
 
