@@ -121,6 +121,34 @@ Adjust to taste — this is what the old box had enabled, not a prescription.
 
 ---
 
+## 4b. SSH keys — do this EARLY
+
+Not a follow-up. `.config/git/config` rewrites every HTTPS URL for the three
+big forges to SSH:
+
+```ini
+[url "git@github.com:"]
+	insteadOf = https://github.com/
+```
+
+Once `chezmoi apply` lands that file, **any** process cloning
+`https://github.com/...` silently gets `git@github.com:...` instead, and fails
+with `Host key verification failed` until a key exists. That includes
+third-party install scripts, which have no idea their URLs were rewritten —
+it is what broke the hermes installer during the VM test, whose own
+HTTPS fallback was rendered unreachable.
+
+```sh
+ssh-keygen -t ed25519 -C "hardikraina079@gmail.com"
+gh auth login          # or add the pubkey to GitHub by hand
+ssh -T git@github.com  # accept the host key once
+```
+
+This also explains why `README.md` clones *before* applying: reverse the two
+and the bootstrap cannot fetch its own repo.
+
+---
+
 ## 5. Toolchain follow-ups
 
 - [ ] `tailscale up` (re-auth; the old machine's state does not transfer)
@@ -151,6 +179,7 @@ Adjust to taste — this is what the old box had enabled, not a prescription.
 | `omarchy-*` packages | Omarchy repo only. The wanted parts are vendored into this repo. |
 | `tobi-try` (`try`) | Unused. |
 | `codex`, `opencode` shim, `ghui`, `copilot`, `gemini`, `pi`, `leaf` | Dropped. `mcat` covers `leaf`. |
+| `hermes` | Dropped from the installer — used for occasional testing, not critical. Its install script clones from GitHub over HTTPS, which the `insteadOf` rules break (see §4b). Install by hand after SSH keys exist: `curl -fsSL https://hermes-agent.nousresearch.com/install.sh \| bash` |
 | `uv` / `uvx` in `~/.local/bin` | mise owns uv now; the hand-installed copies are redundant. |
 
 Nothing is left hand-installed-and-untracked. `claude`, `agy` and `hermes`

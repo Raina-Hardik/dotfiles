@@ -82,10 +82,14 @@ NPM_GLOBALS=(
 # and self-updates afterwards, so these run once and are then skipped.
 # These pipe a remote script into a shell — they are first-party installers
 # for tools already trusted here, but that is the tradeoff being made.
+#
+# NOTE: an installer that git-clones from GitHub/GitLab/Bitbucket over HTTPS
+# will fail on a fresh machine once .config/git/config is applied — its
+# `insteadOf` rules rewrite those URLs to SSH, so the clone needs a key that
+# does not exist yet. Set up SSH keys before adding anything like that here.
 VENDOR_INSTALLERS=(
     "claude|https://claude.ai/install.sh"
     "agy|https://antigravity.google/cli/install.sh"
-    "hermes|https://hermes-agent.nousresearch.com/install.sh"
 )
 
 # ---------------------------------------------------------------------
