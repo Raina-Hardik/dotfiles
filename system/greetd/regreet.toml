@@ -1,0 +1,31 @@
+# Skip the user and session pickers entirely. ReGreet reads the last user and
+# their last session from /var/lib/regreet/state.toml, which currently holds
+# hardikvm -> Niri, so this lands straight on the password prompt.
+skip_selection = true
+
+[background]
+# Pre-blurred: ReGreet has no blur setting, so the blur is baked into the image
+# by ffmpeg rather than applied at render time.
+path = "/etc/greetd/background.jpg"
+fit = "Cover"
+
+[GTK]
+application_prefer_dark_theme = true
+theme_name = "Adwaita-dark"
+font_name = "JetBrainsMono Nerd Font 14"
+cursor_theme_name = "Adwaita"
+cursor_blink = true
+icon_theme_name = "Adwaita"
+
+[commands]
+reboot = ["systemctl", "reboot"]
+poweroff = ["systemctl", "poweroff"]
+
+[appearance]
+greeting_msg = "Welcome back, Hardik"
+
+[widget.clock]
+format = "%H:%M"
+resolution = "1s"
+# Wide enough that the label does not resize the card as the digits change.
+label_width = 320

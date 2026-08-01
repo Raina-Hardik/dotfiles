@@ -79,12 +79,16 @@ else
 fi
 
 # ---------------------------------------------------------------------
+# Resolve the repo root from this script's own location, so the script
+# works whether it is run from the clone or by absolute path.
+REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
+
 # greetd -> niri session
 # ---------------------------------------------------------------------
 
 if command -v greetd >/dev/null 2>&1; then
     install -d /etc/greetd
-    if [ -f /etc/greetd/config.toml ] && grep -q 'niri-session' /etc/greetd/config.toml; then
+    if [ -f /etc/greetd/config.toml ] && grep -q 'regreet' /etc/greetd/config.toml; then
         skip "greetd already configured for niri"
     else
         note "writing /etc/greetd/config.toml"
@@ -93,12 +97,31 @@ if command -v greetd >/dev/null 2>&1; then
 [terminal]
 vt = 1
 
-# tuigreet renders in the TTY — no Qt, no GTK, and it is a real PAM login,
-# which is what lets pam_gnome_keyring unlock the keyring with your password.
+# regreet is a GTK4 greeter and needs a compositor, so cage hosts it. This is
+# still a real PAM login through /etc/pam.d/greetd, which is what lets
+# pam_gnome_keyring unlock the login keyring with the password typed here.
+# Verified in the journal: "gkr-pam: unlocked login keyring".
 [default_session]
-command = "tuigreet --time --remember --cmd niri-session"
+command = "env WLR_NO_HARDWARE_CURSORS=1 cage -s -- regreet"
 user = "greeter"
 EOF
+    fi
+
+    # regreet's own config, stylesheet and background. These live under /etc,
+    # which chezmoi does not manage, so without this block a fresh install gets
+    # stock Adwaita on no wallpaper.
+    #
+    # The background ships pre-blurred: regreet has no blur setting, so the
+    # blur is baked in with ffmpeg rather than applied at render time. Shipping
+    # the blurred file keeps this script free of an ffmpeg dependency.
+    if [ -d "$REPO_DIR/system/greetd" ]; then
+        note "installing regreet theme"
+        install -m 644 "$REPO_DIR/system/greetd/regreet.toml" /etc/greetd/regreet.toml
+        install -m 644 "$REPO_DIR/system/greetd/regreet.css"  /etc/greetd/regreet.css
+        install -m 644 "$REPO_DIR/system/greetd/background-blurred.jpg" \
+                       /etc/greetd/background.jpg
+    else
+        warn "$REPO_DIR/system/greetd not found — greeter will use stock styling"
     fi
 
     note "enabling greetd"

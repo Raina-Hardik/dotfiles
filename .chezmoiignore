@@ -10,6 +10,10 @@ api-keys.sh
 # and must not be written into $HOME.
 packages/
 
+# Files destined for /etc, installed by system-setup.sh rather than by
+# chezmoi. Anchored so it cannot swallow a real ~/.config/system path.
+/system/
+
 # Repo documentation. Anchored to the root so it does not also swallow
 # .config/nvim/README.md, which IS a real dotfile.
 /README.md
