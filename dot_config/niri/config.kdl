@@ -69,6 +69,17 @@ input {
     // focus-follows-mouse max-scroll-amount="0%"
 }
 
+// Explicit cursor. niri otherwise inherits whatever XCURSOR_THEME happens to
+// be set to, which on a bare TTY-first install is nothing at all — and an
+// unset theme is how you end up with a mismatched X11 cursor inside Xwayland
+// windows while native Wayland windows look fine.
+cursor {
+    xcursor-theme "Adwaita"
+    xcursor-size 24
+    hide-when-typing
+    hide-after-inactive-ms 5000
+}
+
 // You can configure outputs by their name, which you can find
 // by running `niri msg outputs` while inside a niri instance.
 // The built-in laptop monitor is usually called "eDP-1".
