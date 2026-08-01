@@ -45,7 +45,14 @@ yay        -S --needed - < packages/pacman-aur.lst
 flatpak install -y $(cat packages/flatpak.lst)
 
 # 6. Now apply. This writes the dotfiles and runs the tool installer.
+#    Use --force on the SECOND run: the Antigravity (agy) installer appends a
+#    PATH line to .bashrc, .bash_profile and .zshrc during step 6, so those
+#    three files are dirty the moment apply finishes and the next apply would
+#    stop to ask. Discarding its edits is safe — env/path.{zsh,sh} already put
+#    ~/.local/bin first, and the installer's line hardcodes an absolute
+#    /home/<user> path that would not survive a rename anyway.
 chezmoi apply
+chezmoi apply --force
 ```
 
 > **Do not** run `chezmoi init --apply` in one shot on a bare machine. It would

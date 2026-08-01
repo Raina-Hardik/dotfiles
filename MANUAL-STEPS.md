@@ -147,6 +147,15 @@ ssh -T git@github.com  # accept the host key once
 This also explains why `README.md` clones *before* applying: reverse the two
 and the bootstrap cannot fetch its own repo.
 
+Until keys exist, the chezmoi source repo itself cannot be updated. The remote
+is stored correctly as HTTPS — `git remote -v` shows the *rewritten* SSH form,
+which is misleading — so the fix is to bypass the global config for one
+command:
+
+```sh
+cd ~/.local/share/chezmoi && GIT_CONFIG_GLOBAL=/dev/null git pull
+```
+
 ---
 
 ## 5. Toolchain follow-ups
