@@ -402,6 +402,9 @@ binds {
 
     Mod+Q repeat=false { close-window; }
 
+    // Toggle between no gaps, some gaps, and default gaps
+    Mod+BackSpace { spawn "~/.local/bin/niri-gaps-toggle"; }
+
     Mod+Left  { focus-column-left; }
     Mod+Down  { focus-window-down; }
     Mod+Up    { focus-window-up; }

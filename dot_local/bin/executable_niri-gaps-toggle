@@ -1,0 +1,12 @@
+#!/bin/bash
+CONFIG=~/.config/niri/config.kdl
+CURRENT=$(grep -E "^\s*gaps [0-9]+" $CONFIG | grep -o "[0-9]\+")
+if [ "$CURRENT" = "16" ]; then
+    NEW=8
+elif [ "$CURRENT" = "8" ]; then
+    NEW=0
+else
+    NEW=16
+fi
+sed -i "s/^\s*gaps [0-9]\+/    gaps $NEW/" $CONFIG
+niri msg action load-config-file
