@@ -112,9 +112,15 @@ fi
 # Services
 # ---------------------------------------------------------------------
 
+# Detect by asking systemctl for the one unit and capturing the result. Do NOT
+# pipe `systemctl list-unit-files` into `grep -q`: grep exits at the first match
+# and systemctl takes the signal, which under `set -o pipefail` makes the whole
+# condition fail. That produced *nondeterministic* false negatives — services
+# silently skipped as "not installed" on one run and enabled on the next.
+
 for svc in sshd docker libvirtd tailscaled bluetooth thermald power-profiles-daemon; do
-    if systemctl list-unit-files "$svc.service" >/dev/null 2>&1 \
-       && systemctl list-unit-files | grep -q "^$svc.service"; then
+    unit=$(systemctl list-unit-files --no-legend "$svc.service" 2>/dev/null)
+    if [ -n "$unit" ]; then
         if systemctl is-enabled "$svc" >/dev/null 2>&1; then
             skip "$svc already enabled"
         else
