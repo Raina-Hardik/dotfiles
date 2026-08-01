@@ -1,24 +1,24 @@
-force_keyboard_focus = true                                                 # forces keyboard forcus to stay in Walker
-selection_wrap = true                                                       # wrap list if at bottom or top
-theme = "omarchy-default"                                                   # theme to use
-additional_theme_location = "~/.local/share/omarchy/default/walker/themes/"
-hide_action_hints = true                                                    # globally hide the action hints
+force_keyboard_focus = true # forces keyboard focus to stay in Walker
+selection_wrap = true       # wrap list if at bottom or top
+theme = "everforest"        # ~/.config/walker/themes/everforest
+hide_action_hints = true    # globally hide the action hints
 
 [placeholders]
-"default" = { input = " Search...", list = "No Results" } # placeholders for input and empty list, key is the providers name, so f.e. "desktopapplications" or "menus:other"
+"default" = { input = "  Search…", list = "No results" }
 
 [keybinds]
 quick_activate = []
 
 [columns]
-symbols = 1 # providers to be queried by default
+symbols = 1
 
 [providers]
-max_results = 256 # 256 should be enough for everyone
-default = [
-  "desktopapplications",
-  "websearch",
-]
+max_results = 256
+
+# Apps only. websearch used to sit here too, so every keystroke interleaved
+# search-engine rows with real applications — that was most of the clutter.
+# It is still one keystroke away behind the `@` prefix below.
+default = [ "desktopapplications" ]
 
 [[providers.prefixes]]
 prefix = "/"
@@ -44,6 +44,7 @@ provider = "websearch"
 prefix = "$"
 provider = "clipboard"
 
-[[emergencies]]
-text = "Restart Walker"
-command = "omarchy-restart-walker"
+# No [[emergencies]] block. The omarchy config had one calling
+# `omarchy-restart-walker`, which does not exist here. There is no walker or
+# elephant systemd user unit on this system either — walker spawns elephant
+# itself — so there is nothing honest to put in its place.

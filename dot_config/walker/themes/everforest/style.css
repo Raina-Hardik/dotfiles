@@ -1,0 +1,150 @@
+/* Everforest (dark, medium) for walker.
+ *
+ * Replaces the omarchy-default theme, which pointed at
+ * ~/.local/share/omarchy/default/walker/themes/ and therefore resolved to
+ * nothing outside omarchy. Walker silently fell back to its built-in theme.
+ */
+
+@define-color bg0    #2d353b;
+@define-color bg1    #343f44;
+@define-color bg2    #3d484d;
+@define-color bg3    #475258;
+@define-color fg     #d3c6aa;
+@define-color grey   #859289;
+@define-color aqua   #7fbbb3;
+@define-color green  #a7c080;
+@define-color red    #e67e80;
+
+* {
+  all: unset;
+  font-family: "JetBrainsMono Nerd Font", monospace;
+}
+
+popover {
+  background: @bg1;
+  border: 1px solid @bg3;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.normal-icons { -gtk-icon-size: 16px; }
+.large-icons  { -gtk-icon-size: 24px; }
+
+scrollbar { opacity: 0; }
+
+.box-wrapper {
+  background: @bg0;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid @bg3;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.elephant-hint,
+.placeholder {
+  color: @grey;
+}
+
+.search-container {
+  border-radius: 8px;
+}
+
+.input {
+  caret-color: @aqua;
+  background: @bg1;
+  padding: 10px 12px;
+  color: @fg;
+  font-size: 15px;
+}
+
+.input placeholder { color: @grey; }
+.input selection   { background: @bg3; color: @fg; }
+
+.list { color: @fg; }
+
+.item-box {
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+
+.item-quick-activation {
+  background: alpha(@aqua, 0.2);
+  color: @aqua;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-size: 12px;
+}
+
+child:selected .item-box,
+row:selected .item-box {
+  background: alpha(@aqua, 0.18);
+}
+
+child:selected .item-text,
+row:selected .item-text {
+  color: @aqua;
+}
+
+.item-text { font-size: 14px; }
+
+.item-subtext {
+  font-size: 12px;
+  color: @grey;
+}
+
+/* providerlist is a menu, not a result list — its subtext is the description
+ * and carries the meaning, so it stays legible. */
+.providerlist .item-subtext {
+  font-size: 13px;
+  color: @grey;
+}
+
+.item-image-text { font-size: 22px; }
+
+.preview {
+  border: 1px solid @bg3;
+  border-radius: 8px;
+  color: @fg;
+}
+
+.preview .large-icons { -gtk-icon-size: 56px; }
+
+.calc .item-text    { font-size: 22px; color: @green; }
+.symbols .item-image { font-size: 22px; }
+
+.todo.done .item-text-box { opacity: 0.35; }
+.todo.urgent              { color: @red; }
+.todo.active              { font-weight: bold; }
+
+.bluetooth.disconnected { opacity: 0.5; }
+
+.keybinds {
+  padding-top: 10px;
+  border-top: 1px solid @bg2;
+  font-size: 12px;
+  color: @grey;
+}
+
+.keybind-button:hover { color: @fg; }
+.keybind-bind         { text-transform: lowercase; color: @bg3; }
+
+.keybind-label {
+  padding: 2px 4px;
+  border-radius: 4px;
+  border: 1px solid @bg3;
+}
+
+.error {
+  padding: 10px;
+  background: @red;
+  color: @bg0;
+  border-radius: 8px;
+}
+
+:not(.calc).current { font-style: italic; }
+
+.preview-content.archlinuxpkgs,
+.preview-content.dnfpackages,
+.preview-content.aptpackages {
+  font-family: monospace;
+}
