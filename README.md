@@ -175,3 +175,32 @@ AUR or crates.io — source unknown).
   quietly worse shell. Vendor what is wanted before hopping.
 - `chezmoi apply --dry-run -v` renders scripts as diffs. That is display only;
   scripts are never written into `$HOME`.
+
+---
+
+## Working model: two branches, two machines
+
+| Branch | Lives on | Role |
+|---|---|---|
+| `omarchy` | the old laptop | Frozen. The known-good omarchy state. `chezmoi apply` there can only ever reproduce this, no matter what lands on `main`. |
+| `main` | the CachyOS VM, and eventually the real CachyOS install | Active. All niri/noctalia ricing happens here. |
+
+The old laptop's chezmoi source is checked out on `omarchy`, so no amount of
+work on `main` can reshape a system still being depended on. Ricing is done
+**inside the VM** — edit there, `chezmoi add` there, commit and push from
+there.
+
+```sh
+git diff omarchy main     # everything the hop changed
+```
+
+When the rice is finished, the real CachyOS install follows the bootstrap at
+the top of this file against `main`, and `omarchy` remains the rollback
+reference.
+
+### VM
+
+Reachable at `hardikvm@192.168.122.42`. `~/vms/cachyos/revert-to-base.sh` on
+the host rolls it back to the pristine post-install snapshot — the VM boots
+UEFI with raw nvram, which rules out `virsh snapshot-revert`, so that script
+does the external-overlay dance instead. It is tested.
