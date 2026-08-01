@@ -20,3 +20,4 @@ palette = 12=#7fbbb3
 palette = 13=#d699b6
 palette = 14=#83c092
 palette = 15=#d3c6aa
+command = /usr/bin/zsh
