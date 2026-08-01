@@ -38,6 +38,7 @@ order = [ "default" ]
         "notifications",
         "clipboard",
         "network",
+        "bluetooth",
         "volume",
         "control-center",
         "session"
@@ -606,6 +607,17 @@ max_length = 260.0
 min_length = 80.0
 title_scroll = "none"
 type = "active_window"
+
+[widget.bluetooth]
+# Only visible while a device is actually connected. On a machine with no
+# paired peripherals this keeps the icon out of the bar entirely.
+hide_when_no_connected_device = true
+type = "bluetooth"
+
+[widget.notifications]
+# The bell earns its place only when there is something unread behind it.
+hide_when_no_unread = true
+type = "notifications"
 
 [widget.cpu]
 stat = "cpu_usage"
