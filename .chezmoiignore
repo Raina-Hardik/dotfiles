@@ -10,7 +10,8 @@ api-keys.sh
 # and must not be written into $HOME.
 packages/
 
-# Repo documentation. Anchored to the root so it does not also swallow
-# .config/nvim/README.md, which IS a real dotfile.
-/README.md
-/MANUAL-STEPS.md
+# Repo documentation, matched at the root only (chezmoi's ignore patterns
+# aren't recursive like gitignore, so no leading slash is needed here, and
+# newer chezmoi rejects a leading slash as an invalid path).
+README.md
+MANUAL-STEPS.md

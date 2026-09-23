@@ -1,0 +1,4 @@
+[data]
+tailscaleDomain   = {{ promptStringOnce . "tailscaleDomain" "Tailscale domain (e.g. foo.ts.net)" | quote }}
+navidromeUser     = {{ promptStringOnce . "navidromeUser" "Navidrome username" "admin" | quote }}
+navidromePassword = {{ promptStringOnce . "navidromePassword" "Navidrome password" | quote }}
