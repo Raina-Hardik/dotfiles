@@ -6,5 +6,4 @@
 [[ -f ~/.bashrc ]] && source ~/.bashrc
 
 # Load environment variables (after bashrc to ensure proper setup)
-[[ -r "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"

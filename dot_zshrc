@@ -9,7 +9,6 @@ INIT="$HOME/.config/zsh/init.zsh"
 [[ -r "$INIT" ]] && source "$INIT"
 
 # Tool environments
-[[ -r "$HOME/.local/bin/env" ]] && source "$HOME/.local/bin/env"
 [[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
 
 if command -v mise >/dev/null 2>&1; then
