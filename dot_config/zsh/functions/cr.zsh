@@ -1,10 +1,7 @@
-# ~/.config/bash/functions/cr.sh
+# ~/.config/zsh/functions/cr.zsh
 cr() {
     clear
-    # Use the last command from history
-    if [ -n "$BASH_COMMAND" ]; then
-        # Run the last command entered
-        fc -s
-    fi
+    # Run the last command entered
+    fc -s
 }
 
