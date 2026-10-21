@@ -6,4 +6,6 @@
 [[ -f ~/.bashrc ]] && source ~/.bashrc
 
 # Load environment variables (after bashrc to ensure proper setup)
-[[ -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
+# .bashrc returns early when non-interactive, so source cargo here only in
+# that case (e.g. `bash -lc`); interactive shells already got it from .bashrc.
+[[ $- != *i* && -r "$HOME/.cargo/env" ]] && source "$HOME/.cargo/env"
