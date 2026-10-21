@@ -52,8 +52,8 @@ yay -S --needed --noconfirm \
 
 # 6. Now apply. This writes the dotfiles and runs the tool installer.
 #    Use --force on the SECOND run: the Antigravity (agy) installer appends a
-#    PATH line to .bashrc, .bash_profile and .zshrc during step 6, so those
-#    three files are dirty the moment apply finishes and the next apply would
+#    PATH line to .bashrc, .bash_profile, .zshrc and .profile during step 6, so
+#    those four files are dirty the moment apply finishes and the next apply would
 #    stop to ask. Discarding its edits is safe — env/path.{zsh,sh} already put
 #    ~/.local/bin first, and the installer's line hardcodes an absolute
 #    /home/<user> path that would not survive a rename anyway.
@@ -91,7 +91,7 @@ prerequisite for reading that file, not something the file installs.
 
 | Path | Purpose |
 |---|---|
-| `dot_zshrc`, `dot_bashrc`, `dot_bash_profile` | Shell entry points |
+| `dot_zshrc`, `dot_bashrc`, `dot_bash_profile`, `dot_profile` | Shell entry points |
 | `dot_config/zsh/`, `dot_config/bash/` | Modular shell config, kept at parity |
 | `dot_config/…` | nvim, git, ghostty, tmux, btop, mise, starship, walker, lazygit |
 | `packages/*.lst` | Package manifests. Excluded from `$HOME` via `.chezmoiignore` |
