@@ -5,6 +5,11 @@
 # GOBIN is pinned to ~/go/bin in zsh/bash env/path.* instead.
 go_set_gobin = false
 
+# Keep the mise shims dir off PATH in activated shells. By default
+# `mise activate` leaves it behind the real tool dirs as an auto-install
+# fallback, which only adds clutter to $PATH.
+not_found_auto_install = false
+
 [tools]
 chezmoi = "latest"
 go = "latest"
