@@ -29,3 +29,8 @@ fi
 # go upgrade would orphan it.
 export GOBIN="$HOME/go/bin"
 
+
+# flyline replaces readline, so it loads LAST: PS1 (starship, via init.sh) and
+# mise's prompt hook must already exist when it takes over line editing.
+# Guarded so a machine without the flyline package just skips it.
+[[ -f /usr/lib/libflyline.so ]] && enable -f /usr/lib/libflyline.so flyline
