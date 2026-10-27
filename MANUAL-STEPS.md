@@ -171,9 +171,11 @@ cd ~/.local/share/chezmoi && GIT_CONFIG_GLOBAL=/dev/null git pull
 
 ## 6. Shell layer
 
-- [ ] `zsh-syntax-highlighting` is installed from pacman and sourced at the very
-      end of `.zshrc`. If it moves, highlighting silently stops covering the fzf
-      ZLE widgets.
+- [ ] `zsh-autosuggestions` and `zsh-syntax-highlighting` are fetched by chezmoi
+      (`.chezmoiexternal.toml`) into `~/.config/zsh/plugins/` and loaded from
+      `plugins/*.zsh`. Highlighting must stay the `99-` loader so it sorts last;
+      if it moves, highlighting silently stops covering the fzf ZLE widgets.
+      `zsh-completions` comes from pacman (it installs onto `fpath` itself).
 - [ ] Login shell stays **bash**, deliberately — a clean, dependency-free TTY
       fallback. zsh is reached via ghostty spawning it directly, not `chsh`.
 
