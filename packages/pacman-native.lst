@@ -16,10 +16,8 @@ chezmoi
 chromium
 clang
 cmake
-cups
 cups-browsed
 cups-filters
-cups-pdf
 distrobox
 dnsmasq
 docker
@@ -28,7 +26,6 @@ docker-compose
 dosfstools
 dotnet-runtime-9.0
 duf
-dust
 efibootmgr
 evince
 exfatprogs
@@ -47,7 +44,6 @@ fzf
 ghostty
 git
 github-cli
-gnome-calculator
 gnome-disk-utility
 gnome-keyring
 gnome-themes-extra
@@ -92,10 +88,8 @@ linux-firmware
 linux-headers
 llvm
 luarocks
-mako
 man-db
 mariadb-libs
-mise
 mpv
 nautilus
 nautilus-python
@@ -132,7 +126,6 @@ reflector
 ripgrep
 ruby
 rust
-satty
 sddm
 slurp
 socat
@@ -141,9 +134,7 @@ starship
 steam
 sudo
 sushi
-swaybg
 swayosd
-system-config-printer
 tailscale
 tesseract
 tesseract-data-eng
@@ -160,7 +151,6 @@ uwsm
 virt-manager
 vpl-gpu-rt
 vulkan-intel
-waybar
 wget
 whois
 wireless-regdb

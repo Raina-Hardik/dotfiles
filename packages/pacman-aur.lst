@@ -21,7 +21,6 @@ helium-browser-bin
 hyprland-preview-share-picker
 limine-mkinitcpio-hook
 limine-snapper-sync
-localsend
 python-terminaltexteffects
 rimsort-bin
 supergfxctl
@@ -34,3 +33,4 @@ xdg-terminal-exec
 xpadneo-dkms
 yaru-icon-theme
 zen-browser-bin
+mise-bin
