@@ -1,0 +1,27 @@
+#!/bin/bash
+# Launch Walker (restored one-line theme) and ensure Elephant is running.
+# Regenerates colors.css from the current Omarchy theme so Walker follows it.
+
+theme=~/.local/state/omarchy/current/theme/colors.toml
+out=~/.config/walker/themes/omarchy-default/colors.css
+if [[ -f $theme ]]; then
+  c() { sed -nE "s/^$1[[:space:]]*=[[:space:]]*\"(#[0-9a-fA-F]+)\".*/\1/p" "$theme" | head -1; }
+  cat >"$out" <<CSS
+@define-color selected-text $(c accent);
+@define-color text $(c foreground);
+@define-color base $(c background);
+@define-color border $(c foreground);
+@define-color foreground $(c foreground);
+@define-color background $(c background);
+CSS
+fi
+
+if ! pgrep -x elephant >/dev/null; then
+  setsid uwsm-app -- elephant &
+fi
+
+if ! pgrep -f "walker --gapplication-service" >/dev/null; then
+  setsid uwsm-app -- env GSK_RENDERER=cairo walker --gapplication-service &
+fi
+
+exec walker --width 644 --maxheight 300 --minheight 300 "$@"

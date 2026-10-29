@@ -11,6 +11,7 @@ go_set_gobin = false
 not_found_auto_install = false
 
 [tools]
+antigravity-cli = "latest"
 chezmoi = "latest"
 go = "latest"
 node = "latest"
