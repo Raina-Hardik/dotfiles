@@ -61,9 +61,7 @@ o.rebind("SUPER + CTRL + E", "Emoji picker", "launch-walker -m symbols")
 -- Drop the default Google Maps webapp binding; leave Super+Shift+S unbound.
 hl.unbind("SUPER + SHIFT + S")
 
--- Super+Q duplicates Super+W (close window); free it, along with the unused
--- Spotify and cliamp defaults.
-hl.unbind("SUPER + Q")
+-- Unbind the unused Spotify and cliamp defaults.
 hl.unbind("SUPER + SHIFT + M")
 hl.unbind("SUPER + SHIFT + ALT + M")
 
@@ -71,3 +69,8 @@ hl.unbind("SUPER + SHIFT + ALT + M")
 -- behavior as the scratchpad. This replaces minimize-to-dock.
 o.rebind("SUPER + M", "Toggle music", hl.dsp.workspace.toggle_special("music"))
 o.bind("SUPER + ALT + M", "Move window to music", hl.dsp.window.move({ workspace = "special:music", follow = false }))
+
+-- A spare special workspace on Super+Q, which by default duplicated Super+W
+-- (close window). Same behavior as the scratchpad.
+o.rebind("SUPER + Q", "Toggle faux", hl.dsp.workspace.toggle_special("faux"))
+o.bind("SUPER + ALT + Q", "Move window to faux", hl.dsp.window.move({ workspace = "special:faux", follow = false }))
