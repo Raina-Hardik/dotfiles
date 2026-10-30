@@ -59,3 +59,6 @@ o.rebind("SUPER + SHIFT + ALT + X", "Hermes", "omarchy-launch-tui hermes")
 o.rebind("SUPER + SPACE", "Launch apps", "launch-walker")
 o.rebind("SUPER + ALT + SPACE", "Omarchy menu", { menu = "root" })
 o.rebind("SUPER + CTRL + E", "Emoji picker", "launch-walker -m symbols")
+
+-- Drop the default Google Maps webapp binding; leave Super+Shift+S unbound.
+hl.unbind("SUPER + SHIFT + S")
