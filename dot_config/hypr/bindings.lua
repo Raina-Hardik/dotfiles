@@ -67,24 +67,7 @@ hl.unbind("SUPER + Q")
 hl.unbind("SUPER + SHIFT + M")
 hl.unbind("SUPER + SHIFT + ALT + M")
 
--- Music lives on its own special workspace, apart from the scratchpad. Super+M
--- shows or hides it, pulling Feishin in if it is elsewhere and launching it
--- there if it is not running. This replaces minimize-to-dock.
-local feishin_url = "https://feishin.shorthair-micro.ts.net/"
-local feishin_class = "chrome-feishin.shorthair-micro.ts.net__-Default"
-
-local function toggle_music()
-  for _, window in ipairs(hl.get_windows()) do
-    if window.class == feishin_class then
-      if not (window.workspace and window.workspace.name == "special:music") then
-        hl.dispatch(hl.dsp.window.move({ workspace = "special:music", follow = false, window = "address:" .. window.address }))
-      end
-      hl.dispatch(hl.dsp.workspace.toggle_special("music"))
-      return
-    end
-  end
-  hl.exec_cmd(o.launch_webapp(feishin_url), { workspace = "special:music" })
-end
-
-o.rebind("SUPER + M", "Toggle music", toggle_music)
+-- Music lives on its own special workspace, apart from the scratchpad. Same
+-- behavior as the scratchpad. This replaces minimize-to-dock.
+o.rebind("SUPER + M", "Toggle music", hl.dsp.workspace.toggle_special("music"))
 o.bind("SUPER + ALT + M", "Move window to music", hl.dsp.window.move({ workspace = "special:music", follow = false }))
