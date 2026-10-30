@@ -36,8 +36,6 @@ o.rebind("SUPER + SHIFT + F", "File manager", "uwsm-app -- nautilus --new-window
 o.rebind("SUPER + ALT + SHIFT + F", "File manager (cwd)", "uwsm-app -- nautilus --new-window " .. cwd)
 o.rebind("SUPER + SHIFT + B", "Browser", "omarchy-launch-browser")
 o.rebind("SUPER + SHIFT + ALT + B", "Browser (private)", "omarchy-launch-browser --private")
-o.rebind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
-o.rebind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
 o.rebind("SUPER + SHIFT + N", "Editor", "omarchy-launch-editor")
 o.rebind("SUPER + SHIFT + D", "Docker", "omarchy-launch-tui lazydocker")
 o.rebind("SUPER + SHIFT + G", "Yazi", term .. " yazi")
@@ -62,3 +60,31 @@ o.rebind("SUPER + CTRL + E", "Emoji picker", "launch-walker -m symbols")
 
 -- Drop the default Google Maps webapp binding; leave Super+Shift+S unbound.
 hl.unbind("SUPER + SHIFT + S")
+
+-- Super+Q duplicates Super+W (close window); free it, along with the unused
+-- Spotify and cliamp defaults.
+hl.unbind("SUPER + Q")
+hl.unbind("SUPER + SHIFT + M")
+hl.unbind("SUPER + SHIFT + ALT + M")
+
+-- Music lives on its own special workspace, apart from the scratchpad. Super+M
+-- shows or hides it, pulling Feishin in if it is elsewhere and launching it
+-- there if it is not running. This replaces minimize-to-dock.
+local feishin_url = "https://feishin.shorthair-micro.ts.net/"
+local feishin_class = "chrome-feishin.shorthair-micro.ts.net__-Default"
+
+local function toggle_music()
+  for _, window in ipairs(hl.get_windows()) do
+    if window.class == feishin_class then
+      if not (window.workspace and window.workspace.name == "special:music") then
+        hl.dispatch(hl.dsp.window.move({ workspace = "special:music", follow = false, window = "address:" .. window.address }))
+      end
+      hl.dispatch(hl.dsp.workspace.toggle_special("music"))
+      return
+    end
+  end
+  hl.exec_cmd(o.launch_webapp(feishin_url), { workspace = "special:music" })
+end
+
+o.rebind("SUPER + M", "Toggle music", toggle_music)
+o.bind("SUPER + ALT + M", "Move window to music", hl.dsp.window.move({ workspace = "special:music", follow = false }))
